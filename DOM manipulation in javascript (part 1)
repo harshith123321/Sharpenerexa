@@ -1,0 +1,10 @@
+let change = document.getElementById('items');
+console.log(items);
+let newchange = document.getElementsByClassName('list-group-item');
+console.log(newchange);
+
+console.log(newchange[2]);
+newchange[2].style.backgroundColor = 'green';
+for(let i = 0; i<newchange.length; i++){
+    newchange[i].style.fontWeight = 'bold';
+}
