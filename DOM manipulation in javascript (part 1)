@@ -10,3 +10,19 @@ for(let i = 0; i<newchange.length; i++){
 }
 let newchange1 = document.getElementsByTagName('li');
 newchange1[4].style.backgroundColor = 'red';
+let newchange1 = document.getElementsByTagName('li');
+newchange1[4].style.backgroundColor = 'red';
+let header = document.querySelector('#main-header');
+header.style.borderBottom = 'solid 4px #ccc';
+
+let input = document.querySelector('input');
+input.value = 'Hello World';
+
+let submit = document.querySelector('input[type = "submit"]');
+submit.value = "SEND";
+
+let itt = document.querySelector('.list-group-item');
+itt.style.color = 'red';
+
+let lastitem = document.querySelector('.list-group-item:last-child');
+lastitem.style.color = 'blue';
