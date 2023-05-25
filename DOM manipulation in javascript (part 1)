@@ -65,3 +65,6 @@ function filterItems(e){
     }
   });
 }
+ localStorage.setItem('name', 'bob')
+ console.log(localStorage.getItem('name'))
+
