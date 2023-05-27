@@ -25,6 +25,10 @@
         <button onclick="bookAppointment()">Book Appointment</button>
     </div>
 
+    <h2>Appointments</h2>
+
+    <ul id="appointmentsList"></ul>
+
     <script>
         function bookAppointment() {
             var name = document.getElementById("name").value;
@@ -52,14 +56,54 @@
             // Store the updated appointments array in local storage
             localStorage.setItem("appointments", JSON.stringify(appointments));
 
-            // Display a success message
-            alert("Appointment booked successfully!");
-
             // Clear the form
             document.getElementById("name").value = "";
             document.getElementById("date").value = "";
             document.getElementById("time").value = "";
+
+            // Refresh the displayed appointments
+            displayAppointments();
         }
+
+        function deleteAppointment(index) {
+            // Retrieve appointments from local storage
+            var appointments = JSON.parse(localStorage.getItem("appointments"));
+
+            // Remove the appointment at the specified index
+            appointments.splice(index, 1);
+
+            // Store the updated appointments array in local storage
+            localStorage.setItem("appointments", JSON.stringify(appointments));
+
+            // Refresh the displayed appointments
+            displayAppointments();
+        }
+
+        function displayAppointments() {
+            var appointments = JSON.parse(localStorage.getItem("appointments"));
+            var appointmentsList = document.getElementById("appointmentsList");
+
+            // Clear existing appointments
+            appointmentsList.innerHTML = "";
+
+            // Display each appointment with a delete button
+            for (var i = 0; i < appointments.length; i++) {
+                var appointment = appointments[i];
+
+                var li = document.createElement("li");
+                li.textContent = "Name: " + appointment.name + ", Date: " + appointment.date + ", Time: " + appointment.time;
+
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.setAttribute("onclick", "deleteAppointment(" + i + ")");
+
+                li.appendChild(deleteButton);
+                appointmentsList.appendChild(li);
+            }
+        }
+
+        // Initial display of appointments
+        displayAppointments();
     </script>
 </body>
 </html>
