@@ -30,6 +30,8 @@
     <ul id="appointmentsList"></ul>
 
     <script>
+        var editingIndex = -1;
+
         function bookAppointment() {
             var name = document.getElementById("name").value;
             var date = document.getElementById("date").value;
@@ -50,8 +52,17 @@
                 appointments = JSON.parse(appointments);
             }
 
-            // Add the new appointment to the array
-            appointments.push(appointment);
+            // If editing an existing appointment
+            if (editingIndex !== -1) {
+                // Replace the appointment at the editing index
+                appointments[editingIndex] = appointment;
+
+                // Reset editing index
+                editingIndex = -1;
+            } else {
+                // Add the new appointment to the array
+                appointments.push(appointment);
+            }
 
             // Store the updated appointments array in local storage
             localStorage.setItem("appointments", JSON.stringify(appointments));
@@ -79,6 +90,20 @@
             displayAppointments();
         }
 
+        function editAppointment(index) {
+            // Retrieve appointments from local storage
+            var appointments = JSON.parse(localStorage.getItem("appointments"));
+
+            // Set the form inputs to the appointment details for editing
+            var appointment = appointments[index];
+            document.getElementById("name").value = appointment.name;
+            document.getElementById("date").value = appointment.date;
+            document.getElementById("time").value = appointment.time;
+
+            // Set the editing index
+            editingIndex = index;
+        }
+
         function displayAppointments() {
             var appointments = JSON.parse(localStorage.getItem("appointments"));
             var appointmentsList = document.getElementById("appointmentsList");
@@ -86,17 +111,22 @@
             // Clear existing appointments
             appointmentsList.innerHTML = "";
 
-            // Display each appointment with a delete button
+            // Display each appointment with an edit and delete button
             for (var i = 0; i < appointments.length; i++) {
                 var appointment = appointments[i];
 
                 var li = document.createElement("li");
                 li.textContent = "Name: " + appointment.name + ", Date: " + appointment.date + ", Time: " + appointment.time;
 
+                var editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.setAttribute("onclick", "editAppointment(" + i + ")");
+
                 var deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
                 deleteButton.setAttribute("onclick", "deleteAppointment(" + i + ")");
 
+                li.appendChild(editButton);
                 li.appendChild(deleteButton);
                 appointmentsList.appendChild(li);
             }
@@ -107,3 +137,4 @@
     </script>
 </body>
 </html>
+
