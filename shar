@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointment Booking</title>
+</head>
+<body>
+    <h1>Appointment Booking</h1>
+
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+    </div>
+
+    <div>
+        <label for="date">Date:</label>
+        <input type="date" id="date" required>
+    </div>
+
+    <div>
+        <label for="time">Time:</label>
+        <input type="time" id="time" required>
+    </div>
+
+    <div>
+        <button onclick="bookAppointment()">Book Appointment</button>
+    </div>
+
+    <script>
+        function bookAppointment() {
+            var name = document.getElementById("name").value;
+            var date = document.getElementById("date").value;
+            var time = document.getElementById("time").value;
+
+            // Store appointment details in local storage
+            var appointment = {
+                name: name,
+                date: date,
+                time: time
+            };
+
+            // Check if appointments array exists in local storage
+            var appointments = localStorage.getItem("appointments");
+            if (!appointments) {
+                appointments = [];
+            } else {
+                appointments = JSON.parse(appointments);
+            }
+
+            // Add the new appointment to the array
+            appointments.push(appointment);
+
+            // Store the updated appointments array in local storage
+            localStorage.setItem("appointments", JSON.stringify(appointments));
+
+            // Display a success message
+            alert("Appointment booked successfully!");
+
+            // Clear the form
+            document.getElementById("name").value = "";
+            document.getElementById("date").value = "";
+            document.getElementById("time").value = "";
+        }
+    </script>
+</body>
+</html>
