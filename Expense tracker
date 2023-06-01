@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function addExpense(){
+            var amount = document.getElementById("amount").value;
+            var reason = document.getElementById("reason").value;
+            if(amount && reason){
+                var expense = {
+                    amount: amount,
+                    reason: reason
+                };
+                var expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+                expenses.push(expense);
+                localStorage.setItem("expenses",JSON.stringify(expenses));
+                displayExpenses();
+            }
+            document.getElementById("amount").value = "";
+            document.getElementById("reason").value = "";
+        }
+        function deleteExpense(index){
+            var expenses = JSON.parse(localStorage.getItem("expenses"));
+            expenses.splice(index, 1);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            displayExpenses()
+        }
+        function editExpense(index){
+            var expenses = JSON.parse(localStorage.getItem("expenses"));
+            var expense = expenses[index];
+            var amount = prompt("Enter new amount",expense.amount);
+            var reason = prompt("enter new reason",expense.reason);
+
+            if(amount && reason){
+                expense.amount = amount;
+                expense.reason = reason;
+                localStorage.setItem("expenses",JSON.stringify(expenses));
+                displayExpenses();
+            }
+        }
+        function displayExpenses() {
+            var expenses = JSON.parse(localStorage.getItem("expenses"));
+            var table = document.getElementById("expenseTable");
+            table.innerHTML = "";
+
+            if (expenses) {
+                for (var i = 0; i < expenses.length; i++) {
+                    var row = table.insertRow(i);
+                    var amountCell = row.insertCell(0);
+                    var reasonCell = row.insertCell(1);
+                    var editCell = row.insertCell(2);
+                    var deleteCell = row.insertCell(3);
+
+                    amountCell.innerHTML = expenses[i].amount;
+                    reasonCell.innerHTML = expenses[i].reason;
+
+                    var deleteButton = document.createElement("button");
+                    deleteButton.innerHTML = "Delete";
+                    deleteButton.setAttribute("onclick", "deleteExpense(" + i + ")");
+                    deleteCell.appendChild(deleteButton);
+
+                    var editButton = document.createElement("button");
+                    editButton.innerHTML = "Edit";
+                    editButton.setAttribute("onclick", "editExpense(" + i + ")");
+                    editCell.appendChild(editButton);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Expense Tracker</h1>
+    <form>
+        <label for = "amount">Amount:</label>
+        <input type="text" id="amount" placeholder="Enter amount" required><br><br>
+
+        <label for="reason">Reason:</label>
+        <input type="text" id="reason" placeholder="Enter reason" required><br><br>
+
+        <button type="button" onclick="addExpense()">Add Expense</button>
+    </form>
+    <h2>Expenses:</h2>
+    <table id="expenseTable">
+        <tr>
+            <th>Amount</th>
+            <th>Reason</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </table>
+    <script>
+        displayExpenses();
+    </script>
+</body>
+</html>
