@@ -2,6 +2,12 @@
 <html>
 <head>
     <title>Appointment Booking</title>
+    <style>
+        .delete-icon {
+            cursor: pointer;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Appointment Booking</h1>
@@ -132,16 +138,13 @@
                     li.setAttribute("data-date", appointment.date);
                     li.setAttribute("data-time", appointment.time);
 
-                    var editButton = document.createElement("button");
-                    editButton.textContent = "Edit";
-                    editButton.setAttribute("onclick", "editAppointment(" + i + ")");
+                    var deleteIcon = document.createElement("i");
+                    deleteIcon.classList.add("delete-icon");
+                    deleteIcon.classList.add("fas");
+                    deleteIcon.classList.add("fa-trash");
+                    deleteIcon.setAttribute("onclick", "deleteAppointment(" + i + ")");
 
-                    var deleteButton = document.createElement("button");
-                    deleteButton.textContent = "Delete";
-                    deleteButton.setAttribute("onclick", "deleteAppointment(" + i + ")");
-
-                    li.appendChild(editButton);
-                    li.appendChild(deleteButton);
+                    li.appendChild(deleteIcon);
                     appointmentsList.appendChild(li);
                 }
             })
