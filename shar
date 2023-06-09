@@ -30,6 +30,7 @@
     <ul id="appointmentsList"></ul>
 
     <script>
+        var apiUrl = "https://crudcrud.com/api/2d6045e3b60b4af49fe39b8bc4a15826/appointments";
         var editingIndex = -1;
 
         function bookAppointment() {
@@ -37,104 +38,123 @@
             var date = document.getElementById("date").value;
             var time = document.getElementById("time").value;
 
-            // Store appointment details in local storage
             var appointment = {
                 name: name,
                 date: date,
                 time: time
             };
 
-            // Check if appointments array exists in local storage
-            var appointments = localStorage.getItem("appointments");
-            if (!appointments) {
-                appointments = [];
-            } else {
-                appointments = JSON.parse(appointments);
-            }
-
-            // If editing an existing appointment
             if (editingIndex !== -1) {
-                // Replace the appointment at the editing index
-                appointments[editingIndex] = appointment;
-
-                // Reset editing index
-                editingIndex = -1;
+                updateAppointment(appointment);
             } else {
-                // Add the new appointment to the array
-                appointments.push(appointment);
+                createAppointment(appointment);
             }
+        }
 
-            // Store the updated appointments array in local storage
-            localStorage.setItem("appointments", JSON.stringify(appointments));
+        function createAppointment(appointment) {
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appointment)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Created:', data);
+                displayAppointments();
+                resetForm();
+            })
+            .catch(error => console.error('Error:', error));
+        }
 
-            // Clear the form
-            document.getElementById("name").value = "";
-            document.getElementById("date").value = "";
-            document.getElementById("time").value = "";
+        function updateAppointment(appointment) {
+            var appointmentId = document.getElementById("appointmentsList").children[editingIndex].getAttribute("data-id");
+            var updateUrl = apiUrl + '/' + appointmentId;
 
-            // Refresh the displayed appointments
-            displayAppointments();
+            fetch(updateUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appointment)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Updated:', data);
+                displayAppointments();
+                resetForm();
+            })
+            .catch(error => console.error('Error:', error));
+
+            editingIndex = -1;
         }
 
         function deleteAppointment(index) {
-            // Retrieve appointments from local storage
-            var appointments = JSON.parse(localStorage.getItem("appointments"));
+            var appointmentId = document.getElementById("appointmentsList").children[index].getAttribute("data-id");
+            var deleteUrl = apiUrl + '/' + appointmentId;
 
-            // Remove the appointment at the specified index
-            appointments.splice(index, 1);
-
-            // Store the updated appointments array in local storage
-            localStorage.setItem("appointments", JSON.stringify(appointments));
-
-            // Refresh the displayed appointments
-            displayAppointments();
+            fetch(deleteUrl, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                console.log('Deleted');
+                displayAppointments();
+            })
+            .catch(error => console.error('Error:', error));
         }
 
         function editAppointment(index) {
-            // Retrieve appointments from local storage
-            var appointments = JSON.parse(localStorage.getItem("appointments"));
-
-            // Set the form inputs to the appointment details for editing
-            var appointment = appointments[index];
-            document.getElementById("name").value = appointment.name;
-            document.getElementById("date").value = appointment.date;
-            document.getElementById("time").value = appointment.time;
-
-            // Set the editing index
             editingIndex = index;
+            var appointmentsList = document.getElementById("appointmentsList");
+            var appointment = appointmentsList.children[index];
+            var appointmentId = appointment.getAttribute("data-id");
+
+            document.getElementById("name").value = appointment.getAttribute("data-name");
+            document.getElementById("date").value = appointment.getAttribute("data-date");
+            document.getElementById("time").value = appointment.getAttribute("data-time");
         }
 
         function displayAppointments() {
-            var appointments = JSON.parse(localStorage.getItem("appointments"));
-            var appointmentsList = document.getElementById("appointmentsList");
+            fetch(apiUrl)
+            .then(response => response.json())
+            .then(appointments => {
+                var appointmentsList = document.getElementById("appointmentsList");
+                appointmentsList.innerHTML = "";
 
-            // Clear existing appointments
-            appointmentsList.innerHTML = "";
+                for (var i = 0; i < appointments.length; i++) {
+                    var appointment = appointments[i];
 
-            // Display each appointment with an edit and delete button
-            for (var i = 0; i < appointments.length; i++) {
-                var appointment = appointments[i];
+                    var li = document.createElement("li");
+                    li.textContent = "Name: " + appointment.name + ", Date: " + appointment.date + ", Time: " + appointment.time;
+                    li.setAttribute("data-id", appointment._id);
+                    li.setAttribute("data-name", appointment.name);
+                    li.setAttribute("data-date", appointment.date);
+                    li.setAttribute("data-time", appointment.time);
 
-                var li = document.createElement("li");
-                li.textContent = "Name: " + appointment.name + ", Date: " + appointment.date + ", Time: " + appointment.time;
+                    var editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.setAttribute("onclick", "editAppointment(" + i + ")");
 
-                var editButton = document.createElement("button");
-                editButton.textContent = "Edit";
-                editButton.setAttribute("onclick", "editAppointment(" + i + ")");
+                    var deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.setAttribute("onclick", "deleteAppointment(" + i + ")");
 
-                var deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.setAttribute("onclick", "deleteAppointment(" + i + ")");
-
-                li.appendChild(editButton);
-                li.appendChild(deleteButton);
-                appointmentsList.appendChild(li);
-            }
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
+                    appointmentsList.appendChild(li);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
 
-        // Initial display of appointments
+        function resetForm() {
+            document.getElementById("name").value = "";
+            document.getElementById("date").value = "";
+            document.getElementById("time").value = "";
+        }
+
         displayAppointments();
     </script>
 </body>
 </html>
-
