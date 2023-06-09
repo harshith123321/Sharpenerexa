@@ -7,6 +7,11 @@
             cursor: pointer;
             color: red;
         }
+
+        .edit-icon {
+            cursor: pointer;
+            color: blue;
+        }
     </style>
 </head>
 <body>
@@ -138,12 +143,19 @@
                     li.setAttribute("data-date", appointment.date);
                     li.setAttribute("data-time", appointment.time);
 
+                    var editIcon = document.createElement("i");
+                    editIcon.classList.add("edit-icon");
+                    editIcon.classList.add("fas");
+                    editIcon.classList.add("fa-edit");
+                    editIcon.setAttribute("onclick", "editAppointment(" + i + ")");
+
                     var deleteIcon = document.createElement("i");
                     deleteIcon.classList.add("delete-icon");
                     deleteIcon.classList.add("fas");
                     deleteIcon.classList.add("fa-trash");
                     deleteIcon.setAttribute("onclick", "deleteAppointment(" + i + ")");
 
+                    li.appendChild(editIcon);
                     li.appendChild(deleteIcon);
                     appointmentsList.appendChild(li);
                 }
